@@ -1,9 +1,15 @@
 package com.project.task_manager.controller;
 
+import com.project.task_manager.dto.TaskRequestDTO;
+import com.project.task_manager.dto.TaskResponseDTO;
 import com.project.task_manager.entity.Task;
+import com.project.task_manager.response.ApiResponse;
 import com.project.task_manager.service.TaskService;
 import jakarta.validation.Valid;
+import org.antlr.v4.runtime.ListTokenSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,27 +22,37 @@ public class TaskController {
     private TaskService taskService;
 
     @PostMapping
-    public Task addTask(@Valid @RequestBody Task task) {
-        return taskService.addTask(task);
+    public ResponseEntity<ApiResponse<TaskResponseDTO>> addTask(@Valid @RequestBody TaskRequestDTO dto) {
+        TaskResponseDTO taskResponseDTO = taskService.addTask(dto);
+        ApiResponse<TaskResponseDTO> response = new ApiResponse<>("Task Added Sucessfully...",taskResponseDTO);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @GetMapping
-    public List<Task> getAllTasks() {
-        return taskService.getAllTasks();
+    public ResponseEntity<ApiResponse<List<TaskResponseDTO>>> getAllTasks() {
+        List<TaskResponseDTO> tasks = taskService.getAllTasks();
+        ApiResponse<List<TaskResponseDTO>> response = new ApiResponse<>("All Tasks...",tasks);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public Task getById(@PathVariable Integer id){
-        return taskService.getTaskById(id)  ;
+    public ResponseEntity<ApiResponse<TaskResponseDTO>> getById(@PathVariable Integer id){
+        TaskResponseDTO taskResponseDTO = taskService.getTaskById(id);
+        ApiResponse<TaskResponseDTO> response = new ApiResponse<>("Task",taskResponseDTO);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteById(@PathVariable Integer id){
+    public ResponseEntity<ApiResponse<String>> deleteById(@PathVariable Integer id){
          taskService.deleteTaskById(id);
+         ApiResponse<String> response = new ApiResponse<>("Task Deleted Successfully..",null);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public Task updateTask(@PathVariable Integer id ,@Valid @RequestBody Task updatedTask ){
-        return taskService.updateTask(id,updatedTask);
+    public ResponseEntity<ApiResponse<TaskResponseDTO>> updateTask(@PathVariable Integer id ,@Valid @RequestBody TaskRequestDTO dto ){
+        TaskResponseDTO taskResponseDTO = taskService.updateTask(id,dto);
+        ApiResponse<TaskResponseDTO> response = new ApiResponse<>("Task Updated",taskResponseDTO);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 }
