@@ -1,12 +1,10 @@
 package com.project.task_manager.controller;
 
-import com.project.task_manager.dto.TaskRequestDTO;
-import com.project.task_manager.dto.TaskResponseDTO;
-import com.project.task_manager.entity.Task;
+import com.project.task_manager.dto.taskDtos.TaskRequestDTO;
+import com.project.task_manager.dto.taskDtos.TaskResponseDTO;
 import com.project.task_manager.response.ApiResponse;
 import com.project.task_manager.service.TaskService;
 import jakarta.validation.Valid;
-import org.antlr.v4.runtime.ListTokenSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -53,6 +51,13 @@ public class TaskController {
     public ResponseEntity<ApiResponse<TaskResponseDTO>> updateTask(@PathVariable Integer id ,@Valid @RequestBody TaskRequestDTO dto ){
         TaskResponseDTO taskResponseDTO = taskService.updateTask(id,dto);
         ApiResponse<TaskResponseDTO> response = new ApiResponse<>("Task Updated",taskResponseDTO);
+        return new ResponseEntity<>(response,HttpStatus.OK);
+    }
+
+    @GetMapping("/my-tasks")
+    public ResponseEntity<ApiResponse<List<TaskResponseDTO>>> getMyTasks(){
+        List<TaskResponseDTO> tasks = taskService.getMyTasks();
+        ApiResponse<List<TaskResponseDTO>> response = new ApiResponse<>("Your Tasks",tasks);
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
 }
